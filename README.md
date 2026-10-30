@@ -333,4 +333,5 @@ node lib/test.mjs --list     # 列出全部用例名
 - [SKILL.md](SKILL.md) —— 给 agent 的技能：怎么查别人的旧活、怎么写共享板、怎么读正文不炸上下文
 - [CHANGELOG.md](CHANGELOG.md) —— 版本变更
 - [docs/MARKET.md](docs/MARKET.md) —— 上架 DSH 插件市场的清单
+- `node scripts/publish.mjs --owner <账号> --dry-run` —— 一条命令把仓库准备好上架；`node scripts/preflight.mjs --live --port <端口>` —— 上架前置自检
 - [docs/ADAPTER-CONTRACT.md](docs/ADAPTER-CONTRACT.md)、[docs/FORMAT-DSH.md](docs/FORMAT-DSH.md) —— 写新适配器时的内部约定

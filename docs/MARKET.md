@@ -225,3 +225,22 @@ Checklist:
 | 仓库不被识别为插件 | 根目录缺 `cordis.patch.yml` 或 `package.json` 没有 `dsh.bundle` | 补齐后再提 |
 | 提示仓库太新 | 创建未满 1 天 | 等一天 |
 | 图标不显示 | `icon` 指向 SVG 或非 GitHub 托管地址 | 换成 `raw.githubusercontent.com` 上的 PNG/JPG |
+
+## 10. 一条命令完成仓库侧准备（`scripts/publish.mjs`）
+
+第 2–4 节的手工步骤可以合并成一次调用——它只做「把仓库变成可上架状态」，不会替你登录 GitHub：
+
+```powershell
+# 先看会改什么，不写任何文件
+node scripts/publish.mjs --owner <你的GitHub账号> --dry-run
+
+# 真正写入：package.json 的三个 URL、publish/<owner>__dsh-agent-context-hub.yml、git origin、分支改名 main
+node scripts/publish.mjs --owner <你的GitHub账号>
+
+# 有凭据的话直接推上去
+node scripts/publish.mjs --owner <你的GitHub账号> --push
+```
+
+它完成后仍要你做的只剩：在 GitHub 建同名仓库（public）、加 `dsh-plugin` topic、等满 1 天、提市场的 YAML PR。
+
+配套自检：`node scripts/preflight.mjs --live --port <端口>` 逐项核对 32 项上架前置条件（包名、`private`、`cordis.patch.yml` 的 insert 名、图标、git 状态、gh/npm 登录、活体路由），任何一项不通过都会打印修复提示并以非 0 退出。

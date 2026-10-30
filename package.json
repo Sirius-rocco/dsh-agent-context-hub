@@ -63,7 +63,9 @@
     "test": "node lib/test.mjs",
     "scan": "node lib/cli.mjs scan",
     "list": "node lib/cli.mjs list",
-    "sync": "node lib/cli.mjs scan --quiet"
+    "sync": "node lib/cli.mjs scan --quiet",
+    "preflight": "node scripts/preflight.mjs",
+    "publish:check": "node scripts/publish.mjs --dry-run"
   },
   "engines": {
     "node": ">=22.15"
