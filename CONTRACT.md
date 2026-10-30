@@ -2,7 +2,7 @@
 
 本文件是 `dsh-agent-context-hub` 与外部（其他 agent、脚本、第三方面板）之间的**稳定契约**：磁盘上放什么、HTTP 上收发什么、什么情况算不兼容。
 
-- 索引版本常量：`INDEX_VERSION = 4`（`lib/hub.mjs`）
+- 索引版本常量：`INDEX_VERSION = 5`（`lib/hub.mjs`）
 - 契约状态：`1.0.0` 起冻结；破坏性变更必须提升 `INDEX_VERSION` 并在 [CHANGELOG.md](CHANGELOG.md) 说明
 - 一切路径都是本机绝对路径；时间一律是带时区偏移的 ISO 8601（`2026-10-30T16:52:49+08:00`），不是 UTC `Z`
 
@@ -32,7 +32,7 @@
 
 ```json
 {
-  "version": 4,
+  "version": 5,
   "generatedAt": "2026-10-30T16:52:49+08:00",
   "sources": [],
   "hosts": ["rag_research"],
@@ -530,7 +530,7 @@ curl.exe -s -X POST http://127.0.0.1:56842/agent-context/api/shared `
 
 契约里唯一允许「拒绝对待」的东西是索引版本。
 
-1. **磁盘索引必须先过版本检查**。host 读 `index.json` 后只有当 `candidate.version === INDEX_VERSION`（当前 `4`）才直接服务；否则**拒绝使用该文件**，打印
+1. **磁盘索引必须先过版本检查**。host 读 `index.json` 后只有当 `candidate.version === INDEX_VERSION`（当前 `5`）才直接服务；否则**拒绝使用该文件**，打印
 
    ```
    disk index version 3 != 4; rebuilding instead of serving it

@@ -3,7 +3,7 @@
 把本机**所有 AI agent 的会话历史**合并成一份只读索引塞进 DSH，再给这些 agent 一块都能读写的上下文板。换 agent（Codex → Claude Code → DSH）时上下文不再断层，同一时刻所有 agent 看的是同一份「谁在哪个项目上做过什么、当时怎么定的」。
 
 - 包名：`dsh-agent-context-hub`，DSH bundle + 客户端面板，面板名「上下文中枢」
-- 索引版本：`INDEX_VERSION = 4`
+- 索引版本：`INDEX_VERSION = 5`
 - 数据目录：默认 `~/.dsh/agent-context`（`DSH_AGENT_CONTEXT_HOME` 可覆盖）
 - 磁盘契约与 HTTP 契约见 [CONTRACT.md](CONTRACT.md)，给 agent 用的技能见 [SKILL.md](SKILL.md)
 
@@ -175,7 +175,7 @@ You are writing documentation for a DSH (DeepSeek Harness) plugin. …
 
 ```
 $ node lib/cli.mjs stats
-索引 2026-10-30T16:52:49+08:00 · version 4
+索引 2026-10-30T16:52:49+08:00 · version 5
   Codex       197 会话 / 193 文件 / 1923 ms
   Claude Code 未启用
   DSH         53 会话 / 53 文件 / 3528 ms
@@ -286,7 +286,7 @@ Unregister-ScheduledTask -TaskName CodexSessionSync -Confirm:$false
 ## 自测
 
 ```bash
-node lib/test.mjs            # 51 个用例，约 5 秒
+node lib/test.mjs            # 52 个用例，约 6 秒
 node lib/test.mjs shared     # 只跑名字里带 shared 的用例
 node lib/test.mjs --list     # 列出全部用例名
 ```
@@ -310,10 +310,10 @@ node lib/test.mjs --list     # 列出全部用例名
 | 某个来源显示「未启用（本机没有数据）」 | 该 agent 没装、没会话，或不在默认路径 | Claude Code 需要 `~/.claude/projects`；也支持 `CLAUDE_CONFIG_DIR` |
 | Codex 会话只有索引记录、正文打不开 | `session_index` 有记录但 rollout 文件不存在（旧机器/已清理） | 属预期，`stats.warnings` 会写清多少个 |
 | 正文返回 `502` | 远程 `ssh` 失败或超时 | 报错里带 `host` 与 `stale`；先手工 `ssh rag_research cat` 验通 |
-| 启动日志出现 `disk index version X != 4` | 磁盘索引是旧版本 | 正常：host 会丢弃旧索引并重扫覆盖 |
+| 启动日志出现 `disk index version X != 5` | 磁盘索引是旧版本 | 正常：host 会丢弃旧索引并重扫覆盖 |
 | 共享板写入 `413` | 请求体超过 256 KB | 拆成多条，或把长文放 `refs` 指向会话/文件 |
 | 搜索不到刚出现的会话 | 索引是 10 分钟内的快照 | 面板或 `GET list?refresh=1` 触发重扫 |
-| 改了 `lib/*.mjs` 但不生效 | `index.js` 与 `lib/` 都是进程内 ESM，模块一经 import 就被缓存 | 部分自动生效：host 每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就带版本号重新 import `lib/hub.mjs`、`lib/paths.mjs`、`lib/shared.mjs`、`lib/transcript.mjs`；`lib/sources/*`（各适配器）与 `lib/parser|indexer|remote.mjs` 是被它们静态 import 的子模块，改完仍需重载插件（插件管理器停用→启用）|
+| 改了 `lib/*.mjs` 但不生效 | `index.js` 与 `lib/` 都是进程内 ESM，模块一经 import 就被缓存 | 部分自动生效：host 每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就带版本号重新 import `lib/hub.mjs`、`lib/shared.mjs`、`lib/transcript.mjs`；其余模块（`lib/sources/*` 适配器、`lib/parser|indexer|remote.mjs`，以及被 hub/shared 静态 import 的 `lib/paths.mjs`）仍是旧实例，改完必须重载插件（插件管理器停用→启用）——尤其 `lib/paths.mjs` 会让 host 眼里同时存在新旧两份路径函数，别在运行时改它|
 
 ## 卸载
 

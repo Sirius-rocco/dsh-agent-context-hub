@@ -33,14 +33,15 @@
 - `lib/sources/claude-code.mjs`：会话行没有带上 `agent`，导致 Claude Code 会话在面板里归到 `agents.undefined`、`findSession('claude-code:<id>')` 查不到、打开正文抛 `EUNKNOWN_AGENT`。现在与其它适配器一致写入 `agent: meta.id`。
 - `lib/sources/inbox.mjs`：来自 `sources.json` glob 来源的会话，`scan` 用来源 id 拼出 `<source>/<session>`，但 `readTranscript` 只认 `entry.agent`，缺 `agent` 的行被全部过滤（正文返回 0 条）。现在缺 `agent` 的行归属于「正在被读取的那个前缀」。
 - `lib/shared.mjs`：未知 `kind` 原先静默降级为 `note`（`--kind decision2` 会丢类型），现在直接拒绝：CLI 退出 1，HTTP 返回 `400 未知的 kind：…（可用：decision|handoff|note|task）`。
-- `index.js`：`loadLib()` 以前只要加载成功就永久缓存，改了 `lib/` 必须重载插件才生效。现在每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就带版本号重新 import `lib/hub.mjs`、`lib/paths.mjs`、`lib/shared.mjs`、`lib/transcript.mjs`（`lib/sources/*` 与 `lib/parser|indexer|remote.mjs` 是这些模块静态 import 的子模块，覆盖不到，改完仍需重载插件）。
+- `index.js`：`loadLib()` 以前只要加载成功就永久缓存，改了 `lib/` 必须重载插件才生效。现在每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就带版本号重新 import `lib/hub.mjs`、`lib/shared.mjs`、`lib/transcript.mjs`；其余模块（`lib/sources/*`、`lib/parser|indexer|remote.mjs`、被 hub/shared 静态 import 的 `lib/paths.mjs`）覆盖不到，改完仍需重载插件。
 - `lib/sources/inbox.mjs`：来源 id 本身可以带 `/`（`team/alpha`），会话 id 拼成 `team/alpha/s1` 后，`readTranscript` 按**第一个** `/` 拆前缀，于是本该匹配的行全被过滤，正文静默返回 0 条。现在 `scan` 把 `source` 与未加前缀的 `sessionId` 写进 `extra`，读取时直接用这两项，不再重新拆 id。
+- `lib/hub.mjs`：`INDEX_VERSION` 4 → 5。索引行新增了 `extra.sessionId`（来源 id 带 `/` 时定位正文要用），旧索引没有这个字段，版本号不升就区分不出来；升级后 host 会丢弃旧索引并自动重扫一次。
 - `lib/shared.mjs`：`kind` 校验只做了小写化没做 trim，`--kind " task "` 会被拒，而读取路径却按 trim 后的值比较。现在两端口径一致。
 - `lib/hub.mjs`：适配器上报的字节数形状不同，DSH 来源曾显示 `bytes: 0`；现在兼容 `totalBytes` / `bytes` / `compressedBytes`。
 
 ### 测试
 
-`node lib/test.mjs` → **51 个用例，51 passed / 0 failed**，约 5 秒；两个已知问题探针在修复后自动转为硬断言。
+`node lib/test.mjs` → **52 个用例，52 passed / 0 failed**，约 6 秒；三个已知问题探针在修复后转为硬断言（glob 来源正文、来源 id 带 `/`、kind trim）。
 
 ### 说明
 
