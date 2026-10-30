@@ -465,7 +465,7 @@
 | GET | `/sources` | — | `{"generatedAt":"<ISO>","sources":[…],"byAgent":{…}}` | — |
 | GET | `/stats` | — | `{"generatedAt":…,"stats":…,"warnings":[…],"sources":[…],"hosts":[…],"scanning":false,"lastError":null,"client":{…}}` | — |
 | GET | `/shared` | `q`,`agent`,`kind`,`cwd`,`limit` | `{"entries":[…],"total":…,"all":…,"counts":{…},"agents":{…},"badLines":0}` | — |
-| POST | `/shared` | JSON body | `201 {"entry":{…}}` | `400 标题和正文至少要有一个` / `400 正文不是合法 JSON`；`413 请求体过大` |
+| POST | `/shared` | JSON body | `201 {"entry":{…}}` | `400 标题和正文至少要有一个` / `400 正文不是合法 JSON` / `400 未知的 kind：…（可用：decision|handoff|note|task）`；`413 请求体过大` |
 | GET | `/digest` | `cwd`,`limit` | `{"count":…,"markdown":"…","entries":[…]}` | — |
 | GET | `/transcript` | `id=<agent:id>` 或裸 id | 见 §6 | `400 missing id`；`404 session not found: <id>`；`502` 远程读取失败 |
 | GET | `/client.js` | — | 面板脚本（`text/javascript`，`no-store`） | — |

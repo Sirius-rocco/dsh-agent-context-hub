@@ -313,7 +313,7 @@ node lib/test.mjs --list     # 列出全部用例名
 | 启动日志出现 `disk index version X != 4` | 磁盘索引是旧版本 | 正常：host 会丢弃旧索引并重扫覆盖 |
 | 共享板写入 `413` | 请求体超过 256 KB | 拆成多条，或把长文放 `refs` 指向会话/文件 |
 | 搜索不到刚出现的会话 | 索引是 10 分钟内的快照 | 面板或 `GET list?refresh=1` 触发重扫 |
-| 改了 `lib/*.mjs` 但不生效 | 只有 `index.js` 能被插件重载，`lib/` 需要进程内重新 import | 已内置：每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就重新 import，不必重载插件 |
+| 改了 `lib/*.mjs` 但不生效 | `index.js` 与 `lib/` 都是进程内 ESM，模块一经 import 就被缓存 | 部分自动生效：host 每次请求比对 `lib/**/*.mjs` 的大小与 mtime，变了就带版本号重新 import `lib/hub.mjs`、`lib/paths.mjs`、`lib/shared.mjs`、`lib/transcript.mjs`；`lib/sources/*`（各适配器）与 `lib/parser|indexer|remote.mjs` 是被它们静态 import 的子模块，改完仍需重载插件（插件管理器停用→启用）|
 
 ## 卸载
 
