@@ -1,0 +1,3 @@
+{"type":"session","version":4,"id":"session-33333333-3333-4333-8333-333333333333","createdAt":1783044000000,"cwd":"D:\\work\\demo"}
+{"type":"user/message","seq":1,"time":1783044001000,"data":{"content":[{"type":"text","text":"alice: 未压缩的 jsonl 也要能读"}],"source":{"kind":"user"}}}
+{"type":"assistant/message","seq":2,"time":1783044002000,"data":{"message":{"role":"assistant","content":[{"type":"text","text":"可以，按魔数判断。"}]}}}

@@ -1,0 +1,71 @@
+{
+  "name": "dsh-agent-context-hub",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "One context hub for every coding agent: index Codex / Claude Code / DSH session history, sync it on a schedule, and share decisions between agents. · 把 Codex / Claude Code / DSH 等所有 agent 的会话历史收进一个面板，定时同步，并提供一个所有 agent 都能读写的共享上下文。",
+  "keywords": [
+    "dsh-plugin",
+    "dsh-bundle",
+    "agent-context",
+    "codex",
+    "claude-code",
+    "session-history",
+    "context-handoff"
+  ],
+  "icon": "./icon.svg",
+  "license": "MIT",
+  "author": "wuqi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OWNER/dsh-agent-context-hub.git"
+  },
+  "homepage": "https://github.com/OWNER/dsh-agent-context-hub#readme",
+  "bugs": {
+    "url": "https://github.com/OWNER/dsh-agent-context-hub/issues"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "icon.svg",
+    "locale",
+    "lib",
+    "scripts",
+    "cordis.patch.yml",
+    "docs",
+    "examples",
+    "CONTRACT.md",
+    "SKILL.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "assets",
+    "publish",
+    "test",
+    "lib/FORMAT.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "test": "node lib/test.mjs",
+    "scan": "node lib/cli.mjs scan",
+    "list": "node lib/cli.mjs list",
+    "sync": "node lib/cli.mjs scan --quiet"
+  },
+  "engines": {
+    "node": ">=22.15"
+  }
+}

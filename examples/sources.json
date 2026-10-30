@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "id": "aider",
+      "kind": "inbox",
+      "glob": "C:/Users/<you>/.aider/logs/*.jsonl"
+    },
+    {
+      "id": "build-bot",
+      "kind": "inbox",
+      "glob": ["D:/ci/logs/*.jsonl", "D:/ci/logs/**/*.jsonl"]
+    }
+  ]
+}

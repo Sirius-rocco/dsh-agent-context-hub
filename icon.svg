@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <!-- hub: one shared core, three agents around it -->
+  <circle cx="12" cy="12" r="3.2" />
+  <circle cx="12" cy="4.2" r="1.9" />
+  <circle cx="5.1" cy="16.2" r="1.9" />
+  <circle cx="18.9" cy="16.2" r="1.9" />
+  <path d="M12 6.1v2.7M10.4 13.8 6.6 15.3M13.6 13.8l3.8 1.5" />
+</svg>

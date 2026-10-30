@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "上下文中枢",
+    "description": "把 Codex、Claude Code、DSH 等所有 agent 的会话历史收进一个面板，并提供一个所有 agent 都能读写的共享上下文。"
+  }
+}

@@ -1,0 +1,6 @@
+# agent-context-hub bundle patch: inserts this plugin into a profile's layer stack.
+- insert:
+    # `name` must be the installable package name: the Loader imports it by name
+    # from the profile, so a mismatch fails with ERR_MODULE_NOT_FOUND.
+    - id: agent-context-hub
+      name: 'dsh-agent-context-hub'

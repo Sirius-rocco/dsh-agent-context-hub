@@ -1,0 +1,7 @@
+node_modules/
+cache/
+.verify/
+.verify-ui/
+.verify-independent/
+*.log
+.DS_Store

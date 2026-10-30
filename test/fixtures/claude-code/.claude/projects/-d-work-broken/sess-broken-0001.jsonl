@@ -1,0 +1,5 @@
+this line is not json at all
+{"type":"user","isMeta":false,"message":{"role":"user","content":"半截行前的真实提问"},"sessionId":"sess-broken-0001","uuid":"b-001","timestamp":"2026-10-30T09:00:00.000Z"}
+{"type":"assistant","message":
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"这条是好的"}]},"uuid":"b-003","timestamp":"2026-10-30T09:00:02.000Z"}
+{"type":"assistant","message":{"role":"assi
