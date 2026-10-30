@@ -34,6 +34,8 @@ docs skill workflow git notify dev security remote market fun
 
 路径：`data/plugins/<owner>__dsh-agent-context-hub.yml`（文件名是 `<owner>__<repo>`，双下划线）。
 
+本仓库已把这份 YAML 放在 `publish/awesome-dsh-plugin.yml`，把里面的三处 `<owner>` 换成你的 GitHub 账号、文件名改成 `<owner>__dsh-agent-context-hub.yml` 即可提交：
+
 ```yaml
 url: https://github.com/<owner>/dsh-agent-context-hub
 name: <owner>/dsh-agent-context-hub
