@@ -21,7 +21,7 @@ node <pkg>/lib/cli.mjs list --limit 5 # 最近发生过什么
 node <pkg>/lib/cli.mjs digest --limit 10   # 共享板上已有的结论
 ```
 
-`<pkg>` 是本插件目录（本机：`D:\Users\80407921\Documents\Codex\2026-09-29\new-chat\agent-context-hub`）。DSH 里也可以直接用 HTTP：
+`<pkg>` 是本插件目录（本机：`<pkg>`）。DSH 里也可以直接用 HTTP：
 
 ```powershell
 curl.exe -s http://127.0.0.1:56842/agent-context/api/stats

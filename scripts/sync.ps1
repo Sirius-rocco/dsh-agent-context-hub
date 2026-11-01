@@ -96,7 +96,8 @@ $cliPath = Join-Path $libDir 'cli.mjs'
 $logPath = Join-Path $cacheDir 'sync.log'
 
 # Fixed node shipped with the DSH primary runtime (matches the task registration).
-$FixedNodePath = 'D:\Users\80407921\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe'
+# Derived from the profile so the script works on any machine; -NodePath overrides it.
+$FixedNodePath = Join-Path $env:USERPROFILE '.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe'
 
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
@@ -332,7 +333,8 @@ try {
     Write-SyncLog ('sync start | pkg=' + $pkgRoot + ' | node=' + $nodeInfo.Path + ' | nodeSource=' + $nodeInfo.Source + ' | out=' + $OutFile + ' | log=' + $logPath)
 
     if (-not $SkipUpstreamCheck) {
-        Write-UpstreamCheck -AutomationToml 'D:\Users\80407921\.codex\automations\obsidian\automation.toml' -LibraryRoot 'D:\Users\80407921\.codex\knowledge\agent-handoff'
+        $codexHome = Join-Path $env:USERPROFILE '.codex'
+        Write-UpstreamCheck -AutomationToml (Join-Path $codexHome 'automations\obsidian\automation.toml') -LibraryRoot (Join-Path $codexHome 'knowledge\agent-handoff')
     }
 
     if ([string]::IsNullOrWhiteSpace($nodeInfo.Path)) {

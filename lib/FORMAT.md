@@ -1,8 +1,8 @@
 # Codex rollout format, index and API
 
 Reference for the data layer under `lib/`. Everything here was read off real
-files in `D:\Users\80407921\.codex\sessions` and
-`D:\Users\80407921\Documents\.codex\sessions`; the numbers are the state of
+files in `%USERPROFILE%\.codex\sessions` and
+`%USERPROFILE%\Documents\.codex\sessions`; the numbers are the state of
 `cache/index.json` generated on 2026-10-20 (after the three-session refresh).
 Nothing is guessed.
 
@@ -10,8 +10,8 @@ Nothing is guessed.
 
 | Root | Role | Contents |
 | --- | --- | --- |
-| `D:\Users\80407921\.codex\sessions\YYYY\MM\DD\rollout-*.jsonl` | canonical (`CODEX_HOME`) | 75 files / ≈ 880.6 MB |
-| `D:\Users\80407921\Documents\.codex\sessions\YYYY\MM\DD\rollout-*.jsonl` | mirror | 158 files / ≈ 1.82 GB |
+| `%USERPROFILE%\.codex\sessions\YYYY\MM\DD\rollout-*.jsonl` | canonical (`CODEX_HOME`) | 75 files / ≈ 880.6 MB |
+| `%USERPROFILE%\Documents\.codex\sessions\YYYY\MM\DD\rollout-*.jsonl` | mirror | 158 files / ≈ 1.82 GB |
 | `rag_research:/home/oppoer/.codex/sessions` + `/home/oppoer/.codex/archived_sessions` | ssh host, **metadata only** | 119 files / ≈ 1.15 GB / 112 sessions |
 
 Counts below are exact for the 2026-10-20 sample; **byte sizes drift** as live
@@ -26,12 +26,12 @@ both roots the **canonical** copy wins and every other path goes to
 `session.duplicateFiles`; 64 of the 90 sessions exist *only* in the mirror, so
 neither root can be dropped.
 
-`D:\Users\80407921\.codex\session_index.jsonl` (`{id, thread_name, updated_at}`)
+`%USERPROFILE%\.codex\session_index.jsonl` (`{id, thread_name, updated_at}`)
 has 168 lines / **102 unique ids** / 0 unparseable. It only supplies titles. It
 lists more sessions than exist on disk: 14 of its 102 ids have no rollout file
 anywhere, so they are reported in `index.warnings` instead of being faked.
-`D:\Users\80407921\.codex\archived_sessions` and
-`D:\Users\80407921\.codex\rollout-migrations` **do not exist** (not “empty”), so
+`%USERPROFILE%\.codex\archived_sessions` and
+`%USERPROFILE%\.codex\rollout-migrations` **do not exist** (not “empty”), so
 no deleted session is hidden there.
 
 Do not trust `File.ReadAllText` / `Get-Content` on a rollout while Codex is

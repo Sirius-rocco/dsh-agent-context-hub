@@ -36,7 +36,7 @@
 ### A. 有 `dsh` 启动器（推荐）
 
 ```powershell
-dsh plugin add "D:\Users\80407921\Documents\Codex\2026-09-29\new-chat\agent-context-hub"
+dsh plugin add "C:\path\to\agent-context-hub"
 ```
 
 市场发布后（见 [docs/MARKET.md](docs/MARKET.md)）也可以直接按仓库地址装（npm 发布是可选的）：
@@ -47,12 +47,12 @@ dsh plugin add github:<owner>/dsh-agent-context-hub
 
 ### B. 没有 `dsh` 启动器（本机当前状态）
 
-本机 Web 版的 `dsh` 不在 PATH 上，走 DSH 自带的插件管理器：在 DSH 会话里说「安装本地插件 `D:\Users\80407921\Documents\Codex\2026-09-29\new-chat\agent-context-hub`」，agent 会调用 `plugin_manager` 安装；也可以手动改 profile 的 `package.json`（**只列出相关字段，合并进现有文件，不要整体覆盖**）：
+本机 Web 版的 `dsh` 不在 PATH 上，走 DSH 自带的插件管理器：在 DSH 会话里说「安装本地插件 `C:\path\to\agent-context-hub`」，agent 会调用 `plugin_manager` 安装；也可以手动改 profile 的 `package.json`（**只列出相关字段，合并进现有文件，不要整体覆盖**）：
 
 ```json
 {
   "dependencies": {
-    "dsh-agent-context-hub": "link:D:/Users/80407921/Documents/Codex/2026-09-29/new-chat/agent-context-hub"
+    "dsh-agent-context-hub": "link:C:/path/to/agent-context-hub"
   },
   "dsh": {
     "profile": {
@@ -101,12 +101,12 @@ node lib/cli.mjs paths
 `paths` 会打印实际生效的六个位置：
 
 ```
-dataHome    D:\Users\80407921\.dsh\agent-context
-indexPath   D:\Users\80407921\.dsh\agent-context\index.json
-remoteDir   D:\Users\80407921\.dsh\agent-context\remote
-sharedFile  D:\Users\80407921\.dsh\agent-context\shared.jsonl
-inboxDir    D:\Users\80407921\.dsh\agent-context\inbox
-sourcesFile D:\Users\80407921\.dsh\agent-context\sources.json
+dataHome    %USERPROFILE%\.dsh\agent-context
+indexPath   %USERPROFILE%\.dsh\agent-context\index.json
+remoteDir   %USERPROFILE%\.dsh\agent-context\remote
+sharedFile  %USERPROFILE%\.dsh\agent-context\shared.jsonl
+inboxDir    %USERPROFILE%\.dsh\agent-context\inbox
+sourcesFile %USERPROFILE%\.dsh\agent-context\sources.json
 ```
 
 ## 用起来
@@ -145,7 +145,7 @@ DSH         53 会话 · 53 文件 · 3221 ms
 通用接入        未启用（本机没有数据）
 合计 250 会话 / 62 项目 / 2244 MB · 远程 112 · 可搜索 240 会话（540 条摘要） · 4730 ms
 ! [Codex] session_index 列出 114 个会话，其中 29 个没有本地或远程 rollout 文件（只有索引记录，正文不可读）
-索引已写入 D:\Users\80407921\.dsh\agent-context\index.json
+索引已写入 %USERPROFILE%\.dsh\agent-context\index.json
 ```
 
 ```
@@ -165,7 +165,7 @@ $ node lib/cli.mjs list --limit 2
 ```
 $ node lib/cli.mjs show --id dsh:7f8730e6-82cd-4f06-b046-0e03bd037ec1 --max-messages 3
 # You are writing documentation for
-agent=dsh id=7f8730e6-82cd-4f06-b046-0e03bd037ec1 cwd=D:\Users\80407921\Documents\Codex\2026-09-29\new-chat
+agent=dsh id=7f8730e6-82cd-4f06-b046-0e03bd037ec1 cwd=%USERPROFILE%\Documents\Codex\2026-09-29\new-chat
 
 --- user 2026-10-30T16:46:40+08:00
 You are writing documentation for a DSH (DeepSeek Harness) plugin. …
@@ -230,7 +230,7 @@ curl.exe -s "http://127.0.0.1:56842/agent-context/api/shared?limit=1"
 ```
 
 ```json
-{"entries":[{"id":"c8b77f84-0725-4ae3-b2d3-3a0dce4f4de2","at":"2026-10-30T16:40:45+08:00","agent":"dsh","kind":"decision","title":"上下文中枢插件开工","body":"把 codex-sessions 泛化成多 agent 上下文中枢：Codex/Claude Code/DSH 适配器 + 共享上下文。","tags":["plugin","context"],"refs":[],"cwd":"D:/Users/80407921/Documents/Codex/2026-09-29/new-chat"}],"total":1,"all":1,"counts":{"decision":1},"agents":{"dsh":1},"badLines":0}
+{"entries":[{"id":"c8b77f84-0725-4ae3-b2d3-3a0dce4f4de2","at":"2026-10-30T16:40:45+08:00","agent":"dsh","kind":"decision","title":"上下文中枢插件开工","body":"把 codex-sessions 泛化成多 agent 上下文中枢：Codex/Claude Code/DSH 适配器 + 共享上下文。","tags":["plugin","context"],"refs":[],"cwd":"C:/work/my-project"}],"total":1,"all":1,"counts":{"decision":1},"agents":{"dsh":1},"badLines":0}
 ```
 
 写一条：

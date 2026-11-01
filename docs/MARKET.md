@@ -127,7 +127,7 @@ YAML 细节：描述里出现 `: `（冒号+空格）必须加引号，否则 YA
 ## 6. 预检（提交前逐条跑）
 
 ```powershell
-cd "D:\Users\80407921\Documents\Codex\2026-09-29\new-chat\agent-context-hub"
+cd "C:\path\to\agent-context-hub"
 
 # 1) 确认 private 不存在、发布元信息齐全
 #    并用真实 GitHub 账号替换 repository / homepage / bugs 里的 OWNER 占位符
@@ -252,7 +252,7 @@ node scripts/publish.mjs --owner <你的GitHub账号> --push
 ```powershell
 # 1. 建一个 fine-grained token：Contents = Read and write，Pull requests = Read and write
 #    （经典 token 就勾 repo）
-# 2. 存成一行到 D:\Users\80407921\.dsh\gh-token.txt
+# 2. 存成一行到 %USERPROFILE%\.dsh\gh-token.txt
 # 3. 先确认身份，再一条命令做完
 node scripts/github-setup.mjs auth
 node scripts/github-setup.mjs all --pr

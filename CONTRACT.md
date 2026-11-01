@@ -87,8 +87,8 @@
     "scanMs": 1501,
     "indexVersion": 3,
     "roots": [
-      { "path": "D:\\Users\\80407921\\.codex\\sessions", "files": 35, "bytes": 533274833, "exists": true },
-      { "path": "D:\\Users\\80407921\\Documents\\.codex\\sessions", "files": 158, "bytes": 1820099148, "exists": true }
+      { "path": "C:\\Users\\you\\.codex\\sessions", "files": 35, "bytes": 533274833, "exists": true },
+      { "path": "C:\\Users\\you\\Documents\\.codex\\sessions", "files": 158, "bytes": 1820099148, "exists": true }
     ],
     "hosts": ["rag_research"]
   }
@@ -159,9 +159,9 @@
 
 ```json
 {
-  "key": "d:\\users\\80407921\\documents\\codex\\2026-09-29\\new-chat",
+  "key": "c:\\users\\you\\documents\\codex\\2026-09-29\\new-chat",
   "label": "new-chat",
-  "cwd": "D:\\Users\\80407921\\Documents\\Codex\\2026-09-29\\new-chat",
+  "cwd": "C:\\Users\\you\\Documents\\Codex\\2026-09-29\\new-chat",
   "sessions": [],
   "agents": { "dsh": 49 },
   "updatedAt": "2026-10-30T16:52:47+08:00",
@@ -188,8 +188,8 @@
   "id": "ca46840b-dc63-4011-8483-2a9d059986ff",
   "agent": "dsh",
   "title": "将codex中所有的会话都复制到 t",
-  "cwd": "D:\\Users\\80407921\\Documents\\Codex\\2026-09-29\\new-chat",
-  "file": "D:\\Users\\80407921\\.dsh\\sessions\\--D-Users-80407921-Documents-Codex-2026-09-29-new-chat--\\session-ca46840b-dc63-4011-8483-2a9d059986ff\\session.v4.jsonl.zstd",
+  "cwd": "C:\\Users\\you\\Documents\\Codex\\2026-09-29\\new-chat",
+  "file": "C:\\Users\\you\\.dsh\\sessions\\--D-work-my-project--\\session-ca46840b-dc63-4011-8483-2a9d059986ff\\session.v4.jsonl.zstd",
   "createdAt": "2026-10-20T16:12:47+08:00",
   "updatedAt": "2026-10-30T16:52:47+08:00",
   "originator": null,
@@ -203,7 +203,7 @@
   "duplicateFiles": [],
   "prompts": ["将codex中所有的会话都复制到 trae中 …"],
   "extra": {
-    "workspace": "D:\\Users\\80407921\\Documents\\Codex\\2026-09-29\\new-chat",
+    "workspace": "C:\\Users\\you\\Documents\\Codex\\2026-09-29\\new-chat",
     "provider": "deepseek",
     "origin": "user",
     "parentSession": null,
@@ -293,7 +293,7 @@
 一行一条 JSON，只追加、不重写；读的时候跳过残行（写到一半的行）并计入 `badLines`。
 
 ```json
-{"id":"c8b77f84-0725-4ae3-b2d3-3a0dce4f4de2","at":"2026-10-30T16:40:45+08:00","agent":"dsh","kind":"decision","title":"上下文中枢插件开工","body":"把 codex-sessions 泛化成多 agent 上下文中枢：Codex/Claude Code/DSH 适配器 + 共享上下文。","tags":["plugin","context"],"refs":[],"cwd":"D:/Users/80407921/Documents/Codex/2026-09-29/new-chat"}
+{"id":"c8b77f84-0725-4ae3-b2d3-3a0dce4f4de2","at":"2026-10-30T16:40:45+08:00","agent":"dsh","kind":"decision","title":"上下文中枢插件开工","body":"把 codex-sessions 泛化成多 agent 上下文中枢：Codex/Claude Code/DSH 适配器 + 共享上下文。","tags":["plugin","context"],"refs":[],"cwd":"C:/Users/you/Documents/Codex/2026-09-29/new-chat"}
 ```
 
 | 字段 | 类型 | 必有 | 规则 |
@@ -400,11 +400,11 @@
   "id": "7f8730e6-82cd-4f06-b046-0e03bd037ec1",
   "agent": "dsh",
   "title": "You are writing documentation for",
-  "cwd": "D:\\Users\\80407921\\Documents\\Codex\\2026-09-29\\new-chat",
+  "cwd": "C:\\Users\\you\\Documents\\Codex\\2026-09-29\\new-chat",
   "model": "deepseek-v4.1-flash",
   "createdAt": "2026-10-30T16:46:36+08:00",
   "updatedAt": "2026-10-30T16:46:40+08:00",
-  "file": "D:\\Users\\80407921\\.dsh\\sessions\\…\\session.v4.jsonl.zstd",
+  "file": "C:\\Users\\you\\.dsh\\sessions\\…\\session.v4.jsonl.zstd",
   "messages": [
     {
       "role": "user",
