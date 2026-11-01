@@ -40,6 +40,21 @@ const socksFlag = flag('socks') || '10808'
 const proxyMode = has('proxy') && flag('proxy') === 'direct' ? 'direct' : 'socks'
 const SOCKS = proxyMode === 'direct' ? '' : `socks5h://127.0.0.1:${socksFlag}`
 
+/** api.github.com is firewalled here; make sure the SSH SOCKS tunnel is up. */
+function ensureTunnel() {
+  if (!SOCKS) return
+  const probe = spawnSync('curl', ['-s', '--max-time', '4', '--socks5-hostname', `127.0.0.1:${socksFlag}`, '-o', '-', 'https://api.github.com/'], { encoding: 'utf8' })
+  if (probe.status === 0) return
+  console.log(`  opening the SOCKS tunnel (ssh -N -D ${socksFlag} rag_research)`)
+  spawnSync('ssh', ['-f', '-N', '-o', 'BatchMode=yes', '-o', 'ExitOnForwardFailure=yes', '-o', 'ServerAliveInterval=20', '-D', String(socksFlag), 'rag_research'], { encoding: 'utf8', timeout: 30000 })
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const retry = spawnSync('curl', ['-s', '--max-time', '4', '--socks5-hostname', `127.0.0.1:${socksFlag}`, '-o', '-', 'https://api.github.com/'], { encoding: 'utf8' })
+    if (retry.status === 0) return
+    spawnSync('sleep', ['1'])
+  }
+  die(`could not open the SOCKS tunnel on port ${socksFlag}`, 'check that `ssh rag_research` works, or pass --socks <port> / --proxy direct')
+}
+
 function die(message, hint) {
   console.error(`error: ${message}`)
   if (hint) console.error(`hint:  ${hint}`)
@@ -279,6 +294,7 @@ function openMarketPr(login) {
 
 /* -------------------------------------------------------------------- main */
 console.log(`github-setup: ${command}${SOCKS ? ` via ${SOCKS}` : ' (direct)'}`)
+ensureTunnel()
 
 const user = whoAmI()
 const login = user.login
