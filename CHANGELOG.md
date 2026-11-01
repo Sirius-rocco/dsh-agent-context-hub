@@ -2,6 +2,20 @@
 
 本文件记录 `dsh-agent-context-hub` 的变更。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## 未发布
+
+### Added — 上架工具链
+
+- `scripts/github-setup.mjs`：一条命令把 GitHub 侧做完——建仓库 → 改写 `package.json` 的三个 URL 并提交 → `git push` → 加 topic → fork 市场仓库 → 写 `data/plugins/<owner>__dsh-agent-context-hub.yml` → 开 PR。token 只从 `~/.dsh/gh-token.txt` 读，不打印、不写入 git config；`api.github.com` 直连被拦时自动起 `ssh -N -D <port>` 隧道。
+- `scripts/publish.mjs`：本地准备（URL、entry、分支名、可选 `--push`），不需要 token。
+- `.verify/pack-check.mjs`：回答「别人装得上吗」——`npm pack --dry-run` 的 `files` 白名单是否含全部运行时模块与适配器、仓库是否夹带 cache，以及 `git clone` 出来的副本能否通过自己的测试并扫描本机。
+
+### Fixed
+
+- `index.js` 的模块缓存护栏现在覆盖 `lib/` 下的**全部**模块（原先只给四个根模块加 `?v=`，`lib/hub.mjs` 再 import 的同名模块会命中旧缓存）。
+- `INDEX_VERSION` 提到 5：`extra.sessionId` 进入索引后，旧版本索引会被判为不兼容并重建。
+- `shared.jsonl` 里含 `/` 的 inbox source id 能正确解析；`shared` 的 `kind` 会去空白。
+
 ## 1.0.0 - 2026-10-30
 
 首个公开版本：把本机所有 AI agent 的会话历史合成一份索引，并给所有 agent 一块共用的上下文板。

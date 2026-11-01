@@ -261,3 +261,30 @@ node scripts/github-setup.mjs all --pr
 `all` 依次执行：建仓库（已存在则跳过）→ `git push`（HTTPS + token，全程走代理）→ 加 `dsh-plugin` 等 topic → fork 市场仓库 → 写 `data/plugins/<owner>__dsh-agent-context-hub.yml` → 开 PR。每一步都能单独跑：`repo` / `push` / `topics` / `market`。
 
 代理端口不是 10808 时用 `--socks <port>`；完全直连用 `--proxy direct`。
+
+## 12. 市场 CI 到底查什么（照它自查）
+
+`awesome-dsh-plugin/scripts/check-submission.mjs` 的自动检查只有四条：
+
+1. 仓库里**任意** `package.json` 声明了 `dsh.bundle`（只声明 `dsh.client` 不算可安装，这是最常见的被拒原因）；
+2. 仓库创建满 **1 天**（没有提交数门槛，而且这条会自己重跑，不必关掉 PR 重开）；
+3. 仓库存在且未归档；
+4. 不是 DSH 仓库本身。
+
+`contributing.md` 里另有几条靠人工核对，提交前先自己对一遍：
+
+- 仓库要有 `dsh-plugin` topic；
+- 描述必须与代码一致（写了「几个工具」「某条命令」「某个 API」，就要真的存在）；
+- 一个 PR 最多 3 条；
+- `icon:` 必须是 GitHub 托管的**位图**（`assets/icon-180.png`），仓库里的 SVG 只给 Harness 自己用；
+- 文件名 `<owner>__<repo>.yml` 必须与 `url:` 里的仓库完全一致。
+
+本仓库的自查入口：
+
+| 命令 | 覆盖 |
+| --- | --- |
+| `node .verify/pack-check.mjs` | 9 项：`files` 白名单是否含全部运行时模块与适配器、是否夹带 cache、`git clone` 后能否通过测试并扫描本机 |
+| `node scripts/preflight.mjs` | 31 项：包名、`private`、`cordis.patch.yml` 的 insert 名、图标、git 状态、凭据泄漏、活体路由 |
+| `node lib/test.mjs` | 52 项单元/集成用例 |
+
+条目模板在 `publish/awesome-dsh-plugin.yml`，`github-setup.mjs market` 会自动把 `<owner>` 换成 token 所属账号再写进去。
