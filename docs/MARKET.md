@@ -283,8 +283,9 @@ node scripts/github-setup.mjs all --pr
 
 | 命令 | 覆盖 |
 | --- | --- |
-| `node .verify/pack-check.mjs` | 9 项：`files` 白名单是否含全部运行时模块与适配器、是否夹带 cache、`git clone` 后能否通过测试并扫描本机 |
+| `node scripts/verify-pack.mjs` | 9 项：`files` 白名单是否含全部运行时模块与适配器、是否夹带 cache、`git clone` 后能否通过测试并扫描本机 |
 | `node scripts/preflight.mjs` | 31 项：包名、`private`、`cordis.patch.yml` 的 insert 名、图标、git 状态、凭据泄漏、活体路由 |
+| `node scripts/verify-api.mjs` | 19 项：对活体实例逐个打 `/ping` `/list` `/sources` `/stats` `/shared` `/digest` `/transcript` `/client.js` 与 404，核对状态码与错误文案 |
 | `node lib/test.mjs` | 52 项单元/集成用例 |
 
 条目模板在 `publish/awesome-dsh-plugin.yml`，`github-setup.mjs market` 会自动把 `<owner>` 换成 token 所属账号再写进去。

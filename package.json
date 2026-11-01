@@ -66,7 +66,9 @@
     "sync": "node lib/cli.mjs scan --quiet",
     "preflight": "node scripts/preflight.mjs",
     "publish:check": "node scripts/publish.mjs --dry-run",
-    "github:setup": "node scripts/github-setup.mjs"
+    "github:setup": "node scripts/github-setup.mjs",
+    "verify:pack": "node scripts/verify-pack.mjs",
+    "verify:api": "node scripts/verify-api.mjs --no-write"
   },
   "engines": {
     "node": ">=22.15"

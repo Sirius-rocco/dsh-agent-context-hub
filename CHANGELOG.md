@@ -8,7 +8,7 @@
 
 - `scripts/github-setup.mjs`：一条命令把 GitHub 侧做完——建仓库 → 改写 `package.json` 的三个 URL 并提交 → `git push` → 加 topic → fork 市场仓库 → 写 `data/plugins/<owner>__dsh-agent-context-hub.yml` → 开 PR。token 只从 `~/.dsh/gh-token.txt` 读，不打印、不写入 git config；`api.github.com` 直连被拦时自动起 `ssh -N -D <port>` 隧道。
 - `scripts/publish.mjs`：本地准备（URL、entry、分支名、可选 `--push`），不需要 token。
-- `.verify/pack-check.mjs`：回答「别人装得上吗」——`npm pack --dry-run` 的 `files` 白名单是否含全部运行时模块与适配器、仓库是否夹带 cache，以及 `git clone` 出来的副本能否通过自己的测试并扫描本机。
+- `scripts/verify-pack.mjs`：回答「别人装得上吗」——`npm pack --dry-run` 的 `files` 白名单是否含全部运行时模块与适配器、仓库是否夹带 cache，以及 `git clone` 出来的副本能否通过自己的测试并扫描本机。配套的 `scripts/verify-api.mjs` 逐条打活体的 HTTP 路由（19 项，默认 `--no-write` 不往共享板写东西）。
 
 ### Fixed
 
