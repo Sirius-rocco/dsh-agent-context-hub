@@ -244,3 +244,20 @@ node scripts/publish.mjs --owner <你的GitHub账号> --push
 它完成后仍要你做的只剩：在 GitHub 建同名仓库（public）、加 `dsh-plugin` topic、等满 1 天、提市场的 YAML PR。
 
 配套自检：`node scripts/preflight.mjs --live --port <端口>` 逐项核对 32 项上架前置条件（包名、`private`、`cordis.patch.yml` 的 insert 名、图标、git 状态、gh/npm 登录、活体路由），任何一项不通过都会打印修复提示并以非 0 退出。
+
+## 11. 用 token 把 GitHub 侧一次做完（`scripts/github-setup.mjs`）
+
+本机 `api.github.com` 与 `github.com` 直连都被拦，脚本默认走 `ssh -D 10808 rag_research` 的 SOCKS 代理；token 从文件读，不打印、不写入 git config。
+
+```powershell
+# 1. 建一个 fine-grained token：Contents = Read and write，Pull requests = Read and write
+#    （经典 token 就勾 repo）
+# 2. 存成一行到 D:\Users\80407921\.dsh\gh-token.txt
+# 3. 先确认身份，再一条命令做完
+node scripts/github-setup.mjs auth
+node scripts/github-setup.mjs all --pr
+```
+
+`all` 依次执行：建仓库（已存在则跳过）→ `git push`（HTTPS + token，全程走代理）→ 加 `dsh-plugin` 等 topic → fork 市场仓库 → 写 `data/plugins/<owner>__dsh-agent-context-hub.yml` → 开 PR。每一步都能单独跑：`repo` / `push` / `topics` / `market`。
+
+代理端口不是 10808 时用 `--socks <port>`；完全直连用 `--proxy direct`。
