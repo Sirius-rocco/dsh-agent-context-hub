@@ -317,13 +317,15 @@ npm login                      # 浏览器授权一次，之后本机记住凭�
 npm publish --access public    # 在仓库根目录执行
 ```
 
-交给 CI（推荐，发布记录留痕）：`.github/workflows/npm-publish.yml` 已经写好，只需要一次配置——
+交给 CI（推荐，发布记录留痕）。工作流模板在 `publish/npm-publish.yml`，三步启用：
 
 1. 在 npm 建一个 **Automation** token；
 2. 仓库 Settings → Secrets and variables → Actions 新建 `NPM_TOKEN`；
-3. 发一个 GitHub Release（或手动 `Run workflow` 并把 `dry_run` 设为 false）。
+3. 把 `publish/npm-publish.yml` 复制到 `.github/workflows/npm-publish.yml` 并提交，然后发一个 GitHub Release（或手动 `Run workflow` 把 `dry_run` 设为 false）。
 
 工作流会先 `npm pack --dry-run`、再跑 `node lib/test.mjs`，全过了才 `npm publish`；`dry_run` 默认 `true`，手动触发不会误发。
+
+> 为什么是模板而不是直接放 `.github/workflows/`：GitHub 只允许带 `workflow` scope 的 token 推送工作流文件，当前 classic token 只有 `repo` scope，push 会报 `refusing to allow a Personal Access Token to create or update workflow ... without workflow scope`。要么给 token 勾上 `workflow` 再推，要么在网页里新建这个文件——两条路都只需要一次。
 
 ### 13.2 复查命令
 
