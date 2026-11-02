@@ -5,3 +5,6 @@ cache/
 .verify-independent/
 *.log
 .DS_Store
+
+# never let a stray credential file get committed
+*gh-credentials-*

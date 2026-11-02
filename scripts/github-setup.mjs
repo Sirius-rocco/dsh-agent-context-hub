@@ -88,11 +88,21 @@ const scrub = (text) => String(text ?? '').split(TOKEN).join('<token>')
 function api(method, endpoint, body) {
   const args = ['-sS', '--max-time', '60', '-X', method, '-H', `Authorization: Bearer ${TOKEN}`, '-H', 'Accept: application/vnd.github+json', '-H', 'X-GitHub-Api-Version: 2022-11-28']
   if (SOCKS) args.push('--socks5-hostname', `127.0.0.1:${socksFlag}`)
+  let payloadFile = null
   if (body !== undefined) {
-    args.push('-H', 'Content-Type: application/json', '-d', JSON.stringify(body))
+    // curl -d mangles non-ASCII on Windows (an em dash turns the body into
+    // "Problems parsing JSON"), so hand the bytes over in a UTF-8 file instead.
+    payloadFile = path.join(os.tmpdir(), `gh-setup-${process.pid}-${Date.now()}.json`)
+    fs.writeFileSync(payloadFile, JSON.stringify(body), 'utf8')
+    args.push('-H', 'Content-Type: application/json', '--data-binary', `@${payloadFile}`)
   }
   const url = endpoint.startsWith('http') ? endpoint : `https://api.github.com${endpoint}`
   const result = spawnSync('curl', [...args, '-w', '\n%{http_code}', url], { encoding: 'utf8', timeout: 90000 })
+  if (payloadFile) {
+    try {
+      fs.unlinkSync(payloadFile)
+    } catch {}
+  }
   const out = result.stdout ?? ''
   const cut = out.lastIndexOf('\n')
   const status = Number(out.slice(cut + 1).trim())
@@ -186,8 +196,12 @@ function ensureRepo(login) {
 /* -------------------------------------------------------------------- push */
 function push(login) {
   const remote = `https://github.com/${login}/${REPO}.git`
-  const tempCredentials = path.join(os.tmpdir(), `gh-credentials-${process.pid}`)
-  fs.writeFileSync(tempCredentials, `https://x-access-token:${TOKEN}@github.com\n`, { mode: 0o600 })
+  // Authenticate with an in-memory extra header instead of a credential-helper
+  // file: `credential.helper=store --file=C:\...` goes through the helper shell,
+  // which mangled the Windows path and dropped a token-bearing file into the
+  // repository — where git committed it and secret scanning rejected the push.
+  const basic = Buffer.from(`x-access-token:${TOKEN}`, 'utf8').toString('base64')
+  const authHeader = `http.https://github.com/.extraheader=AUTHORIZATION: basic ${basic}`
   try {
     const existing = git(['remote', 'get-url', 'origin'], { capture: true })
     if (existing.status === 0) git(['remote', 'set-url', 'origin', remote])
@@ -198,19 +212,15 @@ function push(login) {
 
     const pushed = spawnSync(
       'git',
-      ['-c', `credential.helper=store --file=${tempCredentials}`, ...(SOCKS ? ['-c', `http.proxy=${SOCKS}`] : []), 'push', '-u', 'origin', 'main'],
+      ['-c', authHeader, ...(SOCKS ? ['-c', `http.proxy=${SOCKS}`] : []), 'push', '-u', 'origin', 'main'],
       { cwd: ROOT, encoding: 'utf8' },
     )
-    const output = scrub(`${pushed.stdout ?? ''}${pushed.stderr ?? ''}`).trim()
+    const output = scrub(`${pushed.stdout ?? ''}${pushed.stderr ?? ''}`).split(basic).join('<auth>').trim()
     if (pushed.status !== 0) die(`git push failed:\n${output}`)
     console.log(`  pushed main -> ${remote}`)
     if (output) console.log(`  ${output.split('\n').slice(-2).join('\n  ')}`)
-  } finally {
-    try {
-      fs.unlinkSync(tempCredentials)
-    } catch {
-      /* already gone */
-    }
+  } catch (error) {
+    die(`git push failed: ${scrub(String(error?.message ?? error))}`)
   }
 }
 
@@ -225,8 +235,19 @@ function topics(login) {
 /* ------------------------------------------------------------------ market */
 function marketRow(login) {
   const source = path.join(ROOT, 'publish', 'awesome-dsh-plugin.yml')
-  let text = fs.readFileSync(source, 'utf8')
-  return text.replace(/<owner>/gi, login)
+  const text = fs.readFileSync(source, 'utf8')
+  return (
+    text
+      .replace(/<owner>/gi, login)
+      // The template's own instructions are for us, not for the market repo:
+      // a submitted row should be pure YAML with nothing left to edit.
+      .split(/\r?\n/)
+      .filter((line) => !line.trimStart().startsWith('#'))
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trimEnd()
+      .concat('\n')
+  )
 }
 
 function openMarketPr(login) {
