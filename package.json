@@ -17,11 +17,11 @@
   "author": "wuqi",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OWNER/dsh-agent-context-hub.git"
+    "url": "git+https://github.com/Sirius-rocco/dsh-agent-context-hub.git"
   },
-  "homepage": "https://github.com/OWNER/dsh-agent-context-hub#readme",
+  "homepage": "https://github.com/Sirius-rocco/dsh-agent-context-hub#readme",
   "bugs": {
-    "url": "https://github.com/OWNER/dsh-agent-context-hub/issues"
+    "url": "https://github.com/Sirius-rocco/dsh-agent-context-hub/issues"
   },
   "main": "./index.js",
   "exports": {

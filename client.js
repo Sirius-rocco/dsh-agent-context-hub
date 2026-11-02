@@ -40,16 +40,22 @@ function registerAgentContextHubClient() {
   // shell hot-reloads client modules by re-evaluating this file, and the old
   // instance's slot registration is dropped with it) must register again —
   // otherwise the sidebar icon disappears a while after every reload.
-  if (window.__agentContextHubLoaded && window.__agentContextHubLive) return true
+  if (window.__agentContextHubLive || window.__agentContextHubRegistered) return true
   if (!window.__ModuleLoader__ || typeof window.__ModuleLoader__.load !== 'function') return false
   window.__agentContextHubLoaded = true
+  // The factory is registered once per page load: the host injects this file
+  // and the boot batch also executes it, and the second `load` of one id throws.
+  // `Registered` (unlike `Live`) is already true between registration and
+  // mount, so a second execution in that window returns here instead of
+  // throwing; the dispose hook clears it so a hot reload can register again.
+  window.__agentContextHubRegistered = true
   hubBeacon(
     'script-eval',
     (() => {
       try {
         const boot = window.__DSH_BOOT__
         const ids = Array.isArray(boot?.entries) ? boot.entries.map((entry) => entry && entry.id) : []
-        return `mode=${window.__ModuleLoader__ && window.__ModuleLoader__.mode} bootRev=${boot?.rev ?? 'none'} inBoot=${ids.includes('agent-context-hub')} entries=${ids.length}`
+        return `mode=${window.__ModuleLoader__ && window.__ModuleLoader__.mode} bootRev=${boot?.rev ?? 'none'} inBoot=${ids.includes('dsh-agent-context-hub') || ids.includes('agent-context-hub')} entries=${ids.length}`
       } catch {
         return 'boot-unreadable'
       }
@@ -57,7 +63,9 @@ function registerAgentContextHubClient() {
   )
 
 window.__ModuleLoader__.load({
-  id: 'agent-context-hub',
+  // The boot graph names this bundle by its package name (`dsh-agent-context-hub`);
+  // registering under any other id makes the entry's import fail.
+  id: 'dsh-agent-context-hub',
   factory: (require) => {
     const React = require('react')
     const h = React.createElement
@@ -1696,6 +1704,7 @@ window.__ModuleLoader__.load({
 
           return () => {
             window.__agentContextHubLive = false
+            window.__agentContextHubRegistered = false
             for (const dispose of disposers) {
               try {
                 dispose()
@@ -1737,7 +1746,7 @@ var agentContextHubAttempts = 0
 var agentContextHubTimer = setInterval(() => {
   agentContextHubAttempts += 1
   const done = registerAgentContextHubClient()
-  if (done && window.__agentContextHubLive) {
+  if (done) {
     clearInterval(agentContextHubTimer)
     return
   }
