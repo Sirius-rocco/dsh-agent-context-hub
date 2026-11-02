@@ -2,6 +2,19 @@
 
 本文件记录 `dsh-agent-context-hub` 的变更。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## 1.1.0 - 2026-11-02
+
+### Added — Trae 适配器
+
+- 新来源 `trae`：Trae 不把对话落在本机，只写记忆摘要，所以适配器索引 `~/.trae-cn/memory/projects/<project>/<yyyyMMdd>/session_memory_*.jsonl` 与同目录 `topics.md`——每行是一个会话（跨天合并），标题优先取 topic 摘要，搜索命中每回合的 `intent` / `outcome` / `learned`。
+- `cwd` 从 `AppData/Roaming/Trae CN/User/workspaceStorage/*/workspace.json` 反查，按「编码后的路径前缀」匹配项目目录名；匹配不到归入「未知项目」，不猜。
+- 打开这类会话时 `transcript.summaryOnly = true`，第一条消息固定是一句说明（原文在 Trae 云端），其后按回合重放 `user`（intent）/ `assistant`（outcome + 动作 + 学到）。面板行尾加「摘要」角标，页头写入「摘要模式（原文在云端）」。
+- 新增 4 条测试（fixture 覆盖跨天合并、topics 标题优先、坏行计数、cwd 反查、hub 端到端），套件 52 → 56。
+
+### Changed
+
+- 正文里的助手标签不再写死 `Codex`，改按会话来源显示（`Codex` / `Claude` / `DSH` / `Trae`）。
+
 ## 未发布
 
 ### Added — 上架工具链

@@ -9,7 +9,7 @@
 export const meta = {
   id: 'claude-code',        // 唯一，小写连字符；写进索引每行 session.agent
   label: 'Claude Code',     // 面板徽标与分组显示名
-  order: 20,                // 面板里的展示顺序（codex 10、claude-code 20、dsh 30、inbox 90）
+  order: 20,                // 面板里的展示顺序（codex 10、claude-code 20、dsh 30、trae 40、inbox 90）
   remote: false,            // 是否可能来自 SSH 远程（codex 为 true）
 }
 

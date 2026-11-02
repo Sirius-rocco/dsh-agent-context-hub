@@ -2,7 +2,7 @@
 name: agent-context-hub
 description: >-
   Query and feed the cross-agent context hub: recover another agent's (Codex,
-  Claude Code, DSH, or an inbox source) earlier work from the local session
+  Claude Code, DSH, Trae, or an inbox source) earlier work from the local session
   index, read one transcript without flooding context, and post a
   decision/handoff to the shared board so the next agent can pick it up. Use
   for cross-agent handoff, "what did we decide last time", searching local
@@ -141,7 +141,8 @@ node <pkg>/lib/cli.mjs digest --limit 10
 | 现象 | 处理 |
 | --- | --- |
 | `list` 空 / 退出码 `3` | 先 `scan`；仍空则 `stats` 看该 agent 是否「未启用（本机没有数据）」 |
-| 某 agent 未启用 | 该 agent 没装或数据不在默认路径（Claude Code 要 `~/.claude/projects`，可用 `CLAUDE_CONFIG_DIR`） |
+| 某 agent 未启用 | 该 agent 没装或数据不在默认路径（Claude Code 要 `~/.claude/projects`，可用 `CLAUDE_CONFIG_DIR`；Trae 要 `~/.trae-cn/memory`） |
+| Trae 会话只有摘要 | Trae 不把原文落盘，只存每回合 intent/outcome/learned；这是本机能拿到的全部 |
 | `show` 报 404 | id 少了 agent 前缀或会话已被删除；用 `list --q` 重新取 id |
 | `show` 报 502 | 远程 SSH 读取失败；报错里有 host，先手工 `ssh <host> cat` 验证 |
 | `shared` 写入 413 | 单条超过 256 KB；拆条，长文放文件或 `refs` |

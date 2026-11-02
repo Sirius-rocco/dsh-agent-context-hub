@@ -1,8 +1,8 @@
 {
   "name": "dsh-agent-context-hub",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "description": "One context hub for every coding agent: index Codex / Claude Code / DSH session history, sync it on a schedule, and share decisions between agents. · 把 Codex / Claude Code / DSH 等所有 agent 的会话历史收进一个面板，定时同步，并提供一个所有 agent 都能读写的共享上下文。",
+  "description": "One context hub for every coding agent: index Codex / Claude Code / DSH / Trae session history, sync it on a schedule, and share decisions between agents. · 把 Codex / Claude Code / DSH / Trae 等所有 agent 的会话历史收进一个面板，定时同步，并提供一个所有 agent 都能读写的共享上下文。",
   "keywords": [
     "dsh-plugin",
     "dsh-bundle",
@@ -10,7 +10,8 @@
     "codex",
     "claude-code",
     "session-history",
-    "context-handoff"
+    "context-handoff",
+    "trae"
   ],
   "icon": "./icon.svg",
   "license": "MIT",

@@ -417,7 +417,7 @@ window.__ModuleLoader__.load({
         return h(
           'div',
           { style: { margin: '14px 0', padding: '0 2px' } },
-          h('div', { style: { fontSize: 11, color: T.text2, marginBottom: 4 } }, `Codex · ${absoluteTime(message.ts)}`),
+          h('div', { style: { fontSize: 11, color: T.text2, marginBottom: 4 } }, `${props.agentLabel ?? 'Codex'} · ${absoluteTime(message.ts)}`),
           h(LongText, { text: message.text }),
         )
       }
@@ -445,6 +445,7 @@ window.__ModuleLoader__.load({
       codex: { label: 'Codex', color: T.brand },
       'claude-code': { label: 'Claude', color: '#c2703a' },
       dsh: { label: 'DSH', color: '#4a8f6a' },
+      trae: { label: 'Trae', color: '#6b5bd2' },
       inbox: { label: '接入', color: T.text2 },
     }
 
@@ -519,6 +520,37 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * Marks a row whose agent keeps only summaries locally (Trae): opening it
+     * replays intents/outcomes, not the original messages.
+     */
+    function SummaryBadge() {
+      return h(
+        'span',
+        {
+          title: '该 agent 只在本地保存会话摘要，原文不在本机',
+          style: {
+            flex: '0 0 auto',
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: 15,
+            padding: '0 5px',
+            border: `1px solid ${T.border}`,
+            borderRadius: 999,
+            background: T.layer2,
+            color: T.idle,
+            fontSize: 9.5,
+            fontWeight: 600,
+            lineHeight: '15px',
+            letterSpacing: 0.2,
+            whiteSpace: 'nowrap',
+            verticalAlign: 'middle',
+          },
+        },
+        '摘要',
+      )
+    }
+
+    /**
      * The snippet shown under a row while searching: the first indexed content
      * snippet that contains the keyword, else the newest indexed snippet.
      */
@@ -580,6 +612,7 @@ window.__ModuleLoader__.load({
             session.title || '(无标题会话)',
           ),
           host ? h(RemoteBadge, { host }) : null,
+          session.extra?.summaryOnly === true ? h(SummaryBadge, null) : null,
         ),
         h(
           'div',
@@ -770,6 +803,9 @@ window.__ModuleLoader__.load({
                   `SSH 读取 ${fetchMs} ms`,
                 ),
             h('span', null, `${messages.length} 条消息`),
+            transcript.summaryOnly === true
+              ? h('span', { title: `${agentMeta(session?.agent).label} 只在本地保存摘要，原始消息不在本机` }, '· 摘要模式（原文在云端）')
+              : null,
             transcript.truncated ? h('span', { style: { color: T.warn } }, `· 仅显示前 ${messages.length} 条`) : null,
             h(
               'button',
@@ -798,7 +834,13 @@ window.__ModuleLoader__.load({
           { style: { flex: 1, minHeight: 0, overflowY: 'auto', padding: '6px 18px 32px' } },
           messages.length === 0
             ? h('div', { style: { padding: 24, color: T.text2 } }, '这个会话没有可展示的消息。')
-            : messages.map((message, index) => h(MessageRow, { key: `${index}-${message.ts ?? ''}`, message })),
+            : messages.map((message, index) =>
+                h(MessageRow, {
+                  key: `${index}-${message.ts ?? ''}`,
+                  message,
+                  agentLabel: agentMeta(session?.agent).label,
+                }),
+              ),
         ),
       )
     }

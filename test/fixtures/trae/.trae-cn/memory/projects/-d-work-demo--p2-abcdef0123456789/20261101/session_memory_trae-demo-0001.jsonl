@@ -1,0 +1,2 @@
+{"intent":"帮我把登录模块的偶发 401 定位一下","actions":["读取 auth.ts","运行测试"],"outcome":"找到 token 刷新竞态：并发请求都去刷新，旧的 refresh token 被撤销","learned":["刷新要用单飞锁"],"message_summary_time":"2026-11-01 10:02:11","message_id":"m1","compact_summary_meta":{"version":1}}
+{"intent":"那就加个单飞锁吧","actions":[],"outcome":"在 refreshToken() 里加单飞 Promise，重复请求复用同一个刷新结果","learned":[],"message_summary_time":"2026-11-01 10:20:45","message_id":"m2","compact_summary_meta":{"version":1}}

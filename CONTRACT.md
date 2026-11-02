@@ -97,9 +97,9 @@
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `id` | string | `codex` / `claude-code` / `dsh` / `inbox`，也是会话 id 前缀 |
+| `id` | string | `codex` / `claude-code` / `dsh` / `trae` / `inbox`，也是会话 id 前缀 |
 | `label` | string | 展示名，`通用接入` 用于 `inbox` |
-| `order` | number | 展示排序：Codex 10、Claude Code 20、DSH 30、inbox 90 |
+| `order` | number | 展示排序：Codex 10、Claude Code 20、DSH 30、Trae 40、inbox 90 |
 | `detected` | boolean | 数据源是否存在；`false` 时后面计数为 0，面板显示「未启用」 |
 | `sessions` / `files` / `bytes` | number | 会话数 / 文件数 / 原始字节数 |
 | `ms` | number | 该适配器扫描耗时 |
@@ -111,6 +111,7 @@
 
 - `codex`：`duplicates`、`unreadable`、`badLines`、`badLinesScope`（`head` 表示只扫了头尾窗口）、`windowTruncations`、`remoteSessions`、`remoteFiles`、`remoteBytes`、`remoteShadowsLocal`、`withPrompts`、`promptTotal`、`indexVersion`（内部索引版本，当前 3）、`roots[]`（`path`/`files`/`bytes`/`exists`）、`hosts[]`
 - `dsh`：`compressedBytes`、`decompressedBytes`、`frames`、`records`、`badLines`、`duplicates`、`unreadable`、`decompressMs`
+- `trae`：`projects`、`badLines`、`summaryOnly`（恒为 `true`：本机只有记忆摘要）
 
 ### 2.3 `stats` —— 全局统计
 
@@ -449,6 +450,7 @@
 | `name` | string \| null | 工具名（`tool` 角色时） |
 | `text` | string | 正文；工具输出截断到 4000 字，普通消息上限 120000 字 |
 | `truncated` | boolean | 该条是否被截断 |
+| `summaryOnly` | boolean | 缺省 | `true` 时本机只有摘要（Trae）：`messages[0]` 是 `role: note` 的说明，其后按回合是 `user`（intent）/`assistant`（outcome + 动作 + 学到） |
 
 正文读取是**只读窗口式**：Claude Code 只读头 262144 B + 尾 262144 B，Codex 远程文件只读头尾，DSH 逐帧解压 zstd；都不会修改源文件。
 

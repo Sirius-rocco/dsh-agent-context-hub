@@ -41,7 +41,7 @@ url: https://github.com/<owner>/dsh-agent-context-hub
 name: <owner>/dsh-agent-context-hub
 category: session
 description:
-  en: One read-only index of every local AI-agent session (Codex, Claude Code, DSH, or any JSONL source) grouped by project, plus an append-only shared board for decisions and handoffs so switching agents leaves no context gap.
+  en: One read-only index of every local AI-agent session (Codex, Claude Code, DSH, Trae, or any JSONL source) grouped by project, plus an append-only shared board for decisions and handoffs so switching agents leaves no context gap.
   zh: 把本机所有 agent 的会话历史合并成一份按项目分组的只读索引，并附一块只追加的共享上下文板，让换 agent 时不丢结论。
 # 位图源已随仓库提供：assets/icon-180.png（另有 512px 与透明底版本，脚本 scripts/make-icon.py）
 icon: https://raw.githubusercontent.com/<owner>/dsh-agent-context-hub/main/assets/icon-180.png
@@ -72,7 +72,7 @@ YAML 细节：描述里出现 `: `（冒号+空格）必须加引号，否则 YA
   "page": "https://awesome-dsh-plugin.com/p/<owner>/dsh-agent-context-hub/",
   "category": "session",
   "description": {
-    "en": "One read-only index of every local AI-agent session (Codex, Claude Code, DSH, or any JSONL source) grouped by project, plus an append-only shared board for decisions and handoffs so switching agents leaves no context gap.",
+    "en": "One read-only index of every local AI-agent session (Codex, Claude Code, DSH, Trae, or any JSONL source) grouped by project, plus an append-only shared board for decisions and handoffs so switching agents leaves no context gap.",
     "zh": "把本机所有 agent 的会话历史合并成一份按项目分组的只读索引，并附一块只追加的共享上下文板，让换 agent 时不丢结论。"
   },
   "npm": null,
@@ -164,7 +164,7 @@ gh repo view --json name,url,repositoryTopics,createdAt
 Adds `data/plugins/<owner>__dsh-agent-context-hub.yml`.
 
 - Repo: https://github.com/<owner>/dsh-agent-context-hub
-- Category: `session` — it aggregates, indexes and searches session history from Codex, Claude Code, DSH itself and any JSONL inbox source, grouped by project.
+- Category: `session` — it aggregates, indexes and searches session history from Codex, Claude Code, DSH, Trae and any JSONL inbox source, grouped by project.
 - What it does: one read-only index of every local agent session, plus an append-only shared context board (`decision` / `handoff` / `task` / `note`) that any agent can read and write.
 - Declares `dsh.bundle` (+ `dsh.client` for the panel); `cordis.patch.yml` at repo root; Node >= 20 and >= 22.15 for the DSH adapter's zstd frames.
 - Verified clean-profile install: `dsh plugin --profile web add github:<owner>/dsh-agent-context-hub`, then panel appears after a page refresh and `GET /agent-context/api/ping` returns `{"ok":true,...}`.

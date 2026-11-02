@@ -1,6 +1,6 @@
 # dsh-agent-context-hub · 上下文中枢
 
-把本机**所有 AI agent 的会话历史**合并成一份只读索引塞进 DSH，再给这些 agent 一块都能读写的上下文板。换 agent（Codex → Claude Code → DSH）时上下文不再断层，同一时刻所有 agent 看的是同一份「谁在哪个项目上做过什么、当时怎么定的」。
+把本机**所有 AI agent 的会话历史**合并成一份只读索引塞进 DSH，再给这些 agent 一块都能读写的上下文板。换 agent（Codex → Claude Code → Trae → DSH）时上下文不再断层，同一时刻所有 agent 看的是同一份「谁在哪个项目上做过什么、当时怎么定的」。
 
 - 包名：`dsh-agent-context-hub`，DSH bundle + 客户端面板，面板名「上下文中枢」
 - 索引版本：`INDEX_VERSION = 5`
@@ -12,8 +12,9 @@
 | 问题 | 现在的样子 |
 | --- | --- |
 | 这个方案上次在 Codex 里定过什么？ | 打开面板按项目或关键词搜，直接看当时那段对话 |
-| 三个 agent 轮流改同一个仓库，历史散在三个目录 | 索引按 `cwd` 归并，同一项目下的 Codex / Claude / DSH 会话排在同一个分组里 |
+| 三个 agent 轮流改同一个仓库，历史散在三个目录 | 索引按 `cwd` 归并，同一项目下的 Codex / Claude / DSH / Trae 会话排在同一个分组里 |
 | 远程机器 `rag_research` 上的 Codex 会话在本机看不见 | 元数据先进索引，点开正文时再用 `ssh ... cat` 现取 |
+| Trae 的对话只在它自己的云端，本机翻不到 | Trae 适配器索引它本地落盘的「记忆摘要」（每回合 intent / outcome / learned + `topics.md`），行上标「摘要」，点开按回合重放，并明说原文不在本机 |
 | 结论只留在聊天里，下一个 agent 只能猜 | 写一条 `decision` / `handoff` 到共享板，任何 agent 都能读到 |
 | 新会话要人肉翻译上一轮结论 | `digest` 把共享板压成一段 Markdown，直接贴进新会话 |
 
@@ -115,7 +116,7 @@ sourcesFile %USERPROFILE%\.dsh\agent-context\sources.json
 
 侧栏进入「上下文中枢」，两个标签页：
 
-- **会话**：左列 330px 按项目分组的会话列表，行首是来源 agent 徽标（`Codex` / `Claude` / `DSH` / `接入`），搜索框同时匹配标题、项目、首条提问和会话 ID；右侧正文按消息分段，工具输出折叠。
+- **会话**：左列 330px 按项目分组的会话列表，行首是来源 agent 徽标（`Codex` / `Claude` / `DSH` / `Trae` / `接入`），搜索框同时匹配标题、项目、首条提问和会话 ID；右侧正文按消息分段，工具输出折叠。只保存摘要的来源（Trae）行尾带「摘要」角标，正文页头也会写明「摘要模式（原文在云端）」。
 - **共享上下文**：按类型与 agent 过滤、按关键词搜索，右上「＋ 写入」记录一条决策或交接。
 
 远程会话行会标出 SSH host，**点开时才取正文**（提示「正在从 `<host>` 读取会话…（首次打开约 1~3 秒）」）。索引里只有元数据，所以列表刷新不依赖远程机器的连通性。
@@ -135,16 +136,17 @@ node lib/cli.mjs paths
 
 不传子命令时等价于 `list`。退出码：`0` 成功，`1` 失败，`3` 没有任何结果（空搜索也算正常结束，方便脚本判断）。
 
-真实输出（本机 2026-10-30 16:52 摘录）：
+真实输出（本机 2026-11-02 18:24 摘录）：
 
 ```
 $ node lib/cli.mjs scan
-Codex       197 会话 · 193 文件 · 1505 ms
+Codex       196 会话 · 189 文件 · 1309 ms
 Claude Code 未启用（本机没有数据）
-DSH         53 会话 · 53 文件 · 3221 ms
+DSH         60 会话 · 60 文件 · 3342 ms
+Trae        16 会话 · 21 文件 · 33 ms
 通用接入        未启用（本机没有数据）
-合计 250 会话 / 62 项目 / 2244 MB · 远程 112 · 可搜索 240 会话（540 条摘要） · 4730 ms
-! [Codex] session_index 列出 114 个会话，其中 29 个没有本地或远程 rollout 文件（只有索引记录，正文不可读）
+合计 272 会话 / 62 项目 / 2113 MB · 远程 112 · 可搜索 261 会话（775 条摘要） · 4686 ms
+! [Codex] session_index 列出 116 个会话，其中 32 个没有本地或远程 rollout 文件（只有索引记录，正文不可读）
 索引已写入 %USERPROFILE%\.dsh\agent-context\index.json
 ```
 
@@ -175,15 +177,28 @@ You are writing documentation for a DSH (DeepSeek Harness) plugin. …
 
 ```
 $ node lib/cli.mjs stats
-索引 2026-10-30T16:52:49+08:00 · version 5
-  Codex       197 会话 / 193 文件 / 1923 ms
+索引 2026-11-02T18:24:42+08:00 · version 5
+  Codex       196 会话 / 189 文件 / 1309 ms
   Claude Code 未启用
-  DSH         53 会话 / 53 文件 / 3528 ms
+  DSH         60 会话 / 60 文件 / 3342 ms
+  Trae        16 会话 / 21 文件 / 33 ms
   通用接入        未启用
 
-会话 250 · 项目 62 · 文件 246 · 重复 108 · 字节 2353373981 · 可搜索 240/250 · 耗时 5456 ms
-! [Codex] session_index 列出 114 个会话，其中 29 个没有本地或远程 rollout 文件（只有索引记录，正文不可读）
+会话 272 · 项目 62 · 文件 270 · 重复 105 · 字节 2216004295 · 可搜索 261/272 · 耗时 4686 ms
+! [Codex] session_index 列出 116 个会话，其中 32 个没有本地或远程 rollout 文件（只有索引记录，正文不可读）
 ```
+
+### 各来源的数据从哪来
+
+| 来源 | 本机数据 | 正文完整度 |
+| --- | --- | --- |
+| `codex` | `~/.codex/sessions/**/rollout-*.jsonl`（含远程主机经 SSH 同步的元数据） | 完整，按需读全文 |
+| `claude-code` | `~/.claude/projects/<slug>/<uuid>.jsonl` | 完整，按需读全文 |
+| `dsh` | `~/.dsh/sessions/**`（多帧 zstd） | 完整，按需读全文 |
+| `trae` | `~/.trae-cn/memory/projects/<project>/<yyyyMMdd>/session_memory_*.jsonl` + `topics.md` | **只有摘要**：每回合 intent / outcome / learned，原文在 Trae 云端 |
+| `inbox` | `~/.dsh/agent-context/inbox/*.jsonl`，给没有适配器的 agent 用 | 取决于写入方 |
+
+Trae 的行按会话 ID 合并跨天文件，标题优先取 `topics.md` 的 topic 摘要；`cwd` 从 `AppData/Roaming/Trae CN/User/workspaceStorage/*/workspace.json` 反查，查不到就归到「未知项目」。打开这类会话时，正文第一条固定是一句说明「Trae 只在本地保存记忆摘要」，避免把摘要误当原文。
 
 ```
 $ node lib/cli.mjs context --limit 3
@@ -291,7 +306,7 @@ node lib/test.mjs shared     # 只跑名字里带 shared 的用例
 node lib/test.mjs --list     # 列出全部用例名
 ```
 
-用例覆盖四个适配器（codex / claude-code / dsh / inbox）、索引合并与去重、`findSession`、共享板、转录读取、路径覆盖与 CLI 退出码；全部在临时目录里跑，不碰真实数据。
+用例覆盖五个适配器（codex / claude-code / dsh / trae / inbox）、索引合并与去重、`findSession`、共享板、转录读取、路径覆盖与 CLI 退出码；全部在临时目录里跑，不碰真实数据。
 
 ## 隐私与只读
 
@@ -307,7 +322,8 @@ node lib/test.mjs --list     # 列出全部用例名
 | --- | --- | --- |
 | 装完侧栏没有「上下文中枢」 | 页面没刷新，`client.js` 尚未注入 | **刷新页面（F5）**；仍无则查 `GET stats` 里的 `client.inBootGraph` |
 | 面板一直转圈 / 一直「读取中」 | 首扫还没结束，或 host 未加载 | 等 5~10 秒；`GET ping` 若无响应说明 host 没起来 |
-| 某个来源显示「未启用（本机没有数据）」 | 该 agent 没装、没会话，或不在默认路径 | Claude Code 需要 `~/.claude/projects`；也支持 `CLAUDE_CONFIG_DIR` |
+| 某个来源显示「未启用（本机没有数据）」 | 该 agent 没装、没会话，或不在默认路径 | Claude Code 需要 `~/.claude/projects`（也支持 `CLAUDE_CONFIG_DIR`）；Trae 需要 `~/.trae-cn/memory` 或 `~/.trae/memory` |
+| Trae 会话点开只有总结、没有原文 | Trae 不把对话落在本机，只写记忆摘要 | 属预期；`topics.md` + 每回合 intent/outcome 就是本机能拿到的全部 |
 | Codex 会话只有索引记录、正文打不开 | `session_index` 有记录但 rollout 文件不存在（旧机器/已清理） | 属预期，`stats.warnings` 会写清多少个 |
 | 正文返回 `502` | 远程 `ssh` 失败或超时 | 报错里带 `host` 与 `stale`；先手工 `ssh rag_research cat` 验通 |
 | 启动日志出现 `disk index version X != 5` | 磁盘索引是旧版本 | 正常：host 会丢弃旧索引并重扫覆盖 |

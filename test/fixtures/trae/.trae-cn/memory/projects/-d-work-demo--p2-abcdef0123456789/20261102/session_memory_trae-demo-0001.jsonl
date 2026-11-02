@@ -1,0 +1,2 @@
+{"intent":"401 还在，帮我再确认一次","actions":["复跑 e2e"],"outcome":"e2e 通过，单飞锁在同一实例内有效；多实例部署下仍需 Redis 锁","learned":["跨实例要分布式锁"],"message_summary_time":"2026-11-02 09:14:02","message_id":"m3","compact_summary_meta":{"version":1}}
+not a json line
