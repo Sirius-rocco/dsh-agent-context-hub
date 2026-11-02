@@ -14,7 +14,7 @@
 // shell publishes `window.__ModuleLoader__` the registration waits for it below.
 //
 // Diagnostic beacon: the host records these and exposes them at
-// `agent-context-hub/api/stats` (`client.beacons`), which is the only way to see
+// `agent-context/api/stats` (`client.beacons`), which is the only way to see
 // what the real page did — the panel can only be missing because this script
 // never ran, ran but threw, or ran and registered into a slot nobody renders.
 function hubBeacon(stage, detail) {
@@ -24,7 +24,7 @@ function hubBeacon(stage, detail) {
       detail: detail === undefined || detail === null ? null : String(detail).slice(0, 300),
       at: new Date().toISOString(),
     })
-    const url = 'agent-context-hub/api/beacon'
+    const url = 'agent-context/api/beacon'
     if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
       navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }))
       return
@@ -72,7 +72,7 @@ window.__ModuleLoader__.load({
     const { useState, useEffect, useMemo, useRef, useCallback } = React
 
     const PANEL_ID = 'agent-context-hub'
-    const ROUTE = 'agent-context-hub/api'
+    const ROUTE = 'agent-context/api'
     hubBeacon('factory')
 
     /* ------------------------------------------------------------------ */

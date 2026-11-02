@@ -289,3 +289,49 @@ node scripts/github-setup.mjs all --pr
 | `node lib/test.mjs` | 52 项单元/集成用例 |
 
 条目模板在 `publish/awesome-dsh-plugin.yml`，`github-setup.mjs market` 会自动把 `<owner>` 换成 token 所属账号再写进去。
+## 13. 本轮实际结果（2026-11-02）
+
+已经完成的，不需要再动手：
+
+| 项 | 状态 |
+| --- | --- |
+| 公开仓库 | <https://github.com/Sirius-rocco/dsh-agent-context-hub>（public，`main`，已推 `b8103bf`） |
+| 仓库 topic | `dsh-plugin` / `dsh-bundle` / `agent-context` / `session-history` |
+| 市场条目 | `data/plugins/Sirius-rocco__dsh-agent-context-hub.yml`，`category: session` |
+| 市场 PR | <https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11332>（open，1 个文件，结构检查全过） |
+| 图标 | `assets/icon-180.png`（8420 B，GitHub 托管位图，`icon:` 用的是它） |
+| 发布物自检 | 从 GitHub 拉 tarball 解包后 `node --check` 通过、`node lib/test.mjs` 52/52 通过 |
+| 安装方式 | `dsh plugin --profile web add github:Sirius-rocco/dsh-agent-context-hub`（市场收录后站点会显示这条） |
+
+剩下的只有两件需要账号权限的事：
+
+- **合并 PR #11332**：由市场维护者操作，我们只能等；CI 若回退到 `neutral`，仓库的 `regate.yml` 会自己重跑，不需要关 PR 重开。
+- **npm 发布（可选）**：不上 npm 也能装、也能上架，只是市场卡片的 `npm` / `downloads` 两列为 `null`。
+
+### 13.1 npm 发布（一条命令，或交给 CI）
+
+本地手动：
+
+```powershell
+npm login                      # 浏览器授权一次，之后本机记住凭据
+npm publish --access public    # 在仓库根目录执行
+```
+
+交给 CI（推荐，发布记录留痕）：`.github/workflows/npm-publish.yml` 已经写好，只需要一次配置——
+
+1. 在 npm 建一个 **Automation** token；
+2. 仓库 Settings → Secrets and variables → Actions 新建 `NPM_TOKEN`；
+3. 发一个 GitHub Release（或手动 `Run workflow` 并把 `dry_run` 设为 false）。
+
+工作流会先 `npm pack --dry-run`、再跑 `node lib/test.mjs`，全过了才 `npm publish`；`dry_run` 默认 `true`，手动触发不会误发。
+
+### 13.2 复查命令
+
+```powershell
+node scripts/preflight.mjs --live --port <当前 GUI 端口>   # 32 项前置条件
+node scripts/verify-pack.mjs                                # 9 项打包/可安装性
+node scripts/verify-api.mjs --port <端口>                    # 19 项活体接口
+node scripts/repo-check.mjs --pr 11332                      # 仓库元数据/topic/文件/市场 PR/CI 状态
+```
+
+`node scripts/github-setup.mjs auth` 可随时确认 token 是否还有效（它只打印账号名，不打印 token）。

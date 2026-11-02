@@ -1,0 +1,54 @@
+name: npm publish
+
+# Publishing is opt-in: the repository is installable straight from GitHub
+# (`dsh plugin add github:Sirius-rocco/dsh-agent-context-hub`), and the market
+# entry stays usable with `npm: null`. Running this workflow only adds the
+# npm download counter to the market card.
+#
+# One-time setup: create an npm automation token and store it as the repository
+# secret NPM_TOKEN (Settings -> Secrets and variables -> Actions).
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only run npm pack, do not publish'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Fail early when the token is missing
+        if: ${{ github.event_name == 'release' || inputs.dry_run == false }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN is not set; add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - run: npm pack --dry-run
+
+      - name: Self test before publishing
+        run: node lib/test.mjs
+
+      - name: Publish
+        if: ${{ github.event_name == 'release' || inputs.dry_run == false }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
