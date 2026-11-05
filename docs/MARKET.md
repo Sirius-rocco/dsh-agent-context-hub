@@ -1,5 +1,9 @@
 # 上架 DSH 插件市场
 
+> 当前状态（2026-11-05）：已发布。仓库 <https://github.com/Sirius-rocco/dsh-agent-context-hub>（public，topics `dsh-plugin` / `dsh-bundle` / `agent-context` / `session-history`），市场条目 PR <https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12154>（`data/plugins/Sirius-rocco__dsh-agent-context-hub.yml`，CI 全绿，等维护者合并）。合并前也能直接装：`dsh plugin --profile web add github:Sirius-rocco/dsh-agent-context-hub`。
+>
+> 下文的 `<owner>` 是模板占位符；本仓库这一份已经用真实账号完整跑过一遍。
+
 本文是 `dsh-agent-context-hub` 发布到 DSH 插件市场（awesome-dsh-plugin）的操作清单。所有片段都可直接复制，把 `<owner>` 换成你的 GitHub 账号即可。
 
 ## 1. 链路
