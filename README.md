@@ -40,11 +40,20 @@
 dsh plugin add "C:\path\to\agent-context-hub"
 ```
 
-市场发布后（见 [docs/MARKET.md](docs/MARKET.md)）也可以直接按仓库地址装（npm 发布是可选的）：
+市场条目已提交（[awesome-dsh-plugin#12154](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12154)），现在就能按仓库地址装（npm 发布是可选的）：
 
 ```powershell
-dsh plugin add github:<owner>/dsh-agent-context-hub
+dsh plugin --profile web add github:Sirius-rocco/dsh-agent-context-hub
 ```
+
+想先自己验一遍也可以，装进一个临时 profile 再删掉：
+
+```powershell
+dsh plugin --profile markettest add github:Sirius-rocco/dsh-agent-context-hub
+dsh plugin --profile markettest remove dsh-agent-context-hub
+```
+
+实测：这条命令在干净 profile 里 22 秒装完 v1.1.0，装完后 `node lib/cli.mjs stats` 能扫出本机 177 个会话（Codex 86 / DSH 75 / Trae 16）。
 
 ### B. 没有 `dsh` 启动器（本机当前状态）
 
